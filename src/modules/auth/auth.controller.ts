@@ -18,8 +18,9 @@ export const login = catchAsync(async (req: Request, res: Response) => {
 
   res.cookie('token', result.token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'production', // true need always for sameSite 'none' in production
     sameSite: 'none',
+    partitioned: process.env.NODE_ENV === 'production', // CHIPS: keep cookie alive across cross-site reloads (frontend/backend on different domains) in browsers that support partitioned cookies
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
