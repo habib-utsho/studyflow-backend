@@ -6,12 +6,12 @@ import { AuthUser } from '../types/express';
 
 export const auth = (req: Request, _res: Response, next: NextFunction): void => {
   const header = req.headers.authorization;
+  const headerToken = header?.startsWith('Bearer ') ? header.split(' ')[1] : undefined;
+  const token = headerToken ?? req.cookies?.token;
 
-  if (!header || !header.startsWith('Bearer ')) {
+  if (!token) {
     throw ApiError.unauthorized('You are not authorized. Please log in.');
   }
-
-  const token = header.split(' ')[1];
 
   try {
     const decoded = jwt.verify(token, env.JWT_SECRET) as AuthUser;
