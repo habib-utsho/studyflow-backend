@@ -44,7 +44,7 @@ export const errorHandler = (
     apiError = ApiError.internal('Something went wrong. Please try again.');
   }
 
-  if (!env.isProduction && apiError.statusCode === 500) {
+  if (apiError.statusCode === 500) {
     console.error(err);
   }
 
