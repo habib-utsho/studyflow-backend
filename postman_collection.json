@@ -1,0 +1,372 @@
+{
+  "info": {
+    "name": "StudyFlow API",
+    "description": "Backend API for StudyFlow - a study dashboard where students set goals, break them into daily tasks, and track progress.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000", "type": "string" },
+    { "key": "token", "value": "", "type": "string" },
+    { "key": "taskId", "value": "", "type": "string" },
+    { "key": "goalId", "value": "", "type": "string" },
+    { "key": "subjectId", "value": "", "type": "string" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Root health check",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/",
+            "auth": { "type": "noauth" }
+          }
+        },
+        {
+          "name": "API health check",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/health",
+            "auth": { "type": "noauth" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res && res.success && res.data && res.data.token) {",
+                  "    pm.collectionVariables.set('token', res.data.token);",
+                  "    pm.environment && pm.environment.set && pm.environment.set('token', res.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/register",
+            "auth": { "type": "noauth" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Demo Student\",\n  \"email\": \"demo@studyflow.app\",\n  \"password\": \"demo1234\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res && res.success && res.data && res.data.token) {",
+                  "    pm.collectionVariables.set('token', res.data.token);",
+                  "    pm.environment && pm.environment.set && pm.environment.set('token', res.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/login",
+            "auth": { "type": "noauth" },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@studyflow.app\",\n  \"password\": \"demo1234\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get current user",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/auth/me"
+          }
+        },
+        {
+          "name": "Update profile",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/me",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dailyGoal\": 6,\n  \"theme\": \"dark\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Change password",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/auth/change-password",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oldPassword\": \"demo1234\",\n  \"newPassword\": \"demo1234\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subjects",
+      "item": [
+        {
+          "name": "List subjects",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/subjects"
+          }
+        },
+        {
+          "name": "Create subject",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res && res.success && res.data && res.data._id) {",
+                  "    pm.collectionVariables.set('subjectId', res.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/subjects",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Math\",\n  \"color\": \"#0E7C66\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update subject",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/subjects/{{subjectId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"color\": \"#3B6FE0\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete subject",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/subjects/{{subjectId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "List tasks",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/tasks?page=1&limit=20&sort=-createdAt",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tasks"],
+              "query": [
+                { "key": "completed", "value": "false", "disabled": true },
+                { "key": "priority", "value": "high", "disabled": true },
+                { "key": "subject", "value": "{{subjectId}}", "disabled": true },
+                { "key": "due", "value": "today", "disabled": true },
+                { "key": "search", "value": "integration", "disabled": true },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "sort", "value": "-createdAt" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create task",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res && res.success && res.data && res.data._id) {",
+                  "    pm.collectionVariables.set('taskId', res.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/tasks",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Solve 10 integration problems\",\n  \"subject\": \"{{subjectId}}\",\n  \"priority\": \"high\",\n  \"minutes\": 45\n}"
+            }
+          }
+        },
+        {
+          "name": "Get task by id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/tasks/{{taskId}}"
+          }
+        },
+        {
+          "name": "Update task",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/tasks/{{taskId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"priority\": \"medium\",\n  \"minutes\": 60\n}"
+            }
+          }
+        },
+        {
+          "name": "Toggle task complete",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/tasks/{{taskId}}/toggle"
+          }
+        },
+        {
+          "name": "Delete task",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/tasks/{{taskId}}"
+          }
+        },
+        {
+          "name": "Delete completed tasks",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/tasks/completed"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Goals",
+      "item": [
+        {
+          "name": "List goals",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/goals"
+          }
+        },
+        {
+          "name": "Create goal",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res && res.success && res.data && res.data._id) {",
+                  "    pm.collectionVariables.set('goalId', res.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/goals",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Finish calculus module\",\n  \"subject\": \"{{subjectId}}\",\n  \"target\": 10\n}"
+            }
+          }
+        },
+        {
+          "name": "Get goal by id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/goals/{{goalId}}"
+          }
+        },
+        {
+          "name": "Update goal",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/api/goals/{{goalId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"target\": 12\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete goal",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/goals/{{goalId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Stats",
+      "item": [
+        {
+          "name": "Overview",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/stats/overview"
+          }
+        },
+        {
+          "name": "Weekly",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/stats/weekly"
+          }
+        },
+        {
+          "name": "By subject",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/stats/by-subject"
+          }
+        }
+      ]
+    }
+  ]
+}
