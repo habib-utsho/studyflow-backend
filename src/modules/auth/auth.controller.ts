@@ -21,7 +21,6 @@ export const login = catchAsync(async (req: Request, res: Response) => {
     httpOnly: true,
     secure: env.NODE_ENV === 'production', // true need always for sameSite 'none' in production
     sameSite: 'none',
-    // partitioned: env.NODE_ENV === 'production', // CHIPS: keep cookie alive across cross-site reloads (frontend/backend on different domains) in browsers that support partitioned cookies
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
@@ -30,5 +29,20 @@ export const login = catchAsync(async (req: Request, res: Response) => {
     success: true,
     message: 'Logged in successfully',
     data: result,
+  });
+});
+
+export const logout = catchAsync(async (_req: Request, res: Response) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: env.NODE_ENV === 'production',
+    sameSite: 'none',
+  });
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Logged out successfully',
+    data: null,
   });
 });
