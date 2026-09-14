@@ -1,9 +1,14 @@
-// node 24 + mongoose If your local network's DNS (like a router or ISP) cannot resolve the SRV record, you can force Node.js to use Google's DNS (8.8.8.8) directly in your code:
 import dns from 'node:dns';
-dns.setServers(['8.8.8.8', '8.8.4.4']); // Force Node to use Google DNS for SRV lookups
 import app from './app';
 import { env } from './config/env';
 import { connectDB } from './config/db';
+
+// Local dev workaround: some routers/ISPs can't resolve the mongodb+srv DNS
+// record, so force Node to use Google's DNS for the lookup. Skipped in
+// production/Vercel, where forcing a custom resolver can break outbound DNS.
+if (!env.isProduction) {
+  dns.setServers(['8.8.8.8', '8.8.4.4']);
+}
 
 const start = async (): Promise<void> => {
   try {
