@@ -14,7 +14,7 @@ for beginner students building against it.
 - MongoDB with Mongoose
 - Zod for request validation
 - jsonwebtoken + bcryptjs for auth
-- helmet, cors, morgan, express-rate-limit
+- helmet, cors, morgan
 - tsx for dev, tsc for build
 
 ## Getting started
@@ -41,7 +41,6 @@ cp .env.example .env
 | `JWT_EXPIRES_IN` | JWT expiry (e.g. `7d`, `12h`)                              | `7d`                                                  |
 | `NODE_ENV`       | `development` \| `production` \| `test`                   | `development`                                         |
 | `CORS_ORIGINS`   | Comma-separated list of allowed origins                   | `http://localhost:5173,http://localhost:3000`         |
-| `RATE_LIMIT_MAX` | Max requests per IP per 15 minutes (global limiter)        | `300`                                                 |
 
 The app validates all of this with Zod at boot (`src/config/env.ts`) and crashes
 immediately with a readable message if anything required is missing — it will never
@@ -141,7 +140,7 @@ Send the JWT as `Authorization: Bearer <token>`. Tokens are returned by both
 | GET    | `/`            | No   | Liveness check                   |
 | GET    | `/api/health`  | No   | Liveness + DB connection status  |
 
-### Auth (`/api/auth`) — rate limited to 20 req / 15 min per IP
+### Auth (`/api/auth`)
 
 | Method | Path                    | Auth | Body                                         |
 | ------ | ----------------------- | ---- | --------------------------------------------- |

@@ -2,7 +2,6 @@ import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import rateLimit from 'express-rate-limit';
 import mongoose from 'mongoose';
 import { env } from './config/env';
 import { sendResponse } from './utils/sendResponse';
@@ -28,18 +27,6 @@ if (!env.isProduction) {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: env.RATE_LIMIT_MAX,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    success: false,
-    message: 'Too many requests. Please slow down and try again later.',
-  },
-});
-app.use(globalLimiter);
 
 app.get('/', (_req: Request, res: Response) => {
   sendResponse(res, {
