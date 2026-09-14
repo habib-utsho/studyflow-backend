@@ -21,7 +21,7 @@ export const login = catchAsync(async (req: Request, res: Response) => {
     httpOnly: true,
     secure: env.NODE_ENV === 'production', // true need always for sameSite 'none' in production
     sameSite: 'none',
-    partitioned: env.NODE_ENV === 'production', // CHIPS: keep cookie alive across cross-site reloads (frontend/backend on different domains) in browsers that support partitioned cookies
+    // partitioned: env.NODE_ENV === 'production', // CHIPS: keep cookie alive across cross-site reloads (frontend/backend on different domains) in browsers that support partitioned cookies
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
