@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
 import { env } from './config/env';
+import { connectDB } from './config/db';
 import { sendResponse } from './utils/sendResponse';
 import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
@@ -53,6 +54,14 @@ app.get('/api/health', (_req: Request, res: Response) => {
   });
 });
 
+app.use('/api', async (_req: Request, _res: Response, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 app.use('/api', apiRouter);
 
 app.use(notFound);
